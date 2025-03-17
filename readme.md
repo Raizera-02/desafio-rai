@@ -25,7 +25,6 @@ Este projeto é uma API desenvolvida em **Java com Spring Boot** que gerencia pe
  │   ├── AppApplication.java  # Classe principal
  ├── test/java/com/desafio_api/app
  │   ├── service/       # Testes unitários
- │   ├── controller/    # Testes de integração
 ```
 
 ## 🛠 Configuração e Execução
