@@ -3,6 +3,7 @@ package com.desafio_api.app.controller;
 import com.desafio_api.app.domain.Order;
 import com.desafio_api.app.domain.OrderItem;
 import com.desafio_api.app.domain.User;
+import com.desafio_api.app.security.UserDetailsImpl;
 import com.desafio_api.app.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,17 @@ public class OrderController {
     // Criar pedido (apenas USER)
     @PostMapping
     public ResponseEntity<Order> createOrder(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody Set<OrderItem> itens) {
+
+        System.out.println("-------------------------");
+        System.out.println("User ID: " + userDetails.getUserId());
+        System.out.println("Username: " + userDetails.getUsername());
+        System.out.println("-------------------------");
+
+        // Buscar usuário no banco
+        User user = userDetails.getUser();
+
         Order order = orderService.createOrder(user, itens);
         return ResponseEntity.ok(order);
     }

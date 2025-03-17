@@ -16,15 +16,29 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final NotificationService notificationService; // Serviço de notificação (pode ser email, SMS, etc.)
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, NotificationService notificationService) {
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository,
+            NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.notificationService = notificationService;
     }
+
     @Transactional
     public Order createOrder(User user, Set<OrderItem> itens) {
         Order order = new Order();
         order.setUser(user);
+
+        order = orderRepository.save(order);
+
+        // Atualiza os produtos com informações do banco
+        for (OrderItem item : itens) {
+            Product product = productRepository.findById(item.getProduto().getId())
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+            item.setProduto(product); // Atualiza o objeto Produto dentro do item
+            item.setPedido(order);
+        }
+
         order.setItens(itens);
         order.setValorTotal(calculateTotalValue(itens));
 
@@ -33,10 +47,11 @@ public class OrderService {
             order.setStatus("PENDENTE");
         } else {
             order.setStatus("CANCELADO");
-            // Notificar usuário sobre o cancelamento
             notificationService.notifyUser(user, "Seu pedido foi cancelado devido à falta de estoque.");
         }
 
+        // 🔥 Agora que os itens estão corretamente associados, salvamos a ordem
+        // novamente
         return orderRepository.save(order);
     }
 
