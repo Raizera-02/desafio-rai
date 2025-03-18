@@ -26,11 +26,6 @@ public class OrderController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody Set<OrderItem> itens) {
 
-        System.out.println("-------------------------");
-        System.out.println("User ID: " + userDetails.getUserId());
-        System.out.println("Username: " + userDetails.getUsername());
-        System.out.println("-------------------------");
-
         // Buscar usuário no banco
         User user = userDetails.getUser();
 
@@ -47,7 +42,13 @@ public class OrderController {
 
     // Listar pedidos do usuário autenticado (apenas USER)
     @GetMapping
-    public ResponseEntity<List<Order>> getUserOrders(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<Order>> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        // Buscar usuário no banco
+        System.out.println("-------------------------");
+        System.out.println("User ID: " + userDetails.getUserId());
+        System.out.println("Username: " + userDetails.getUsername());
+        System.out.println("-------------------------");
+        User user = userDetails.getUser();
         List<Order> orders = orderService.getOrdersByUser(user);
         return ResponseEntity.ok(orders);
     }

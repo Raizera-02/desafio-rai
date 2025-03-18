@@ -93,6 +93,6 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByUser(User user) {
-        return orderRepository.findByUser(user); // Busca pedidos do usuário
+        return orderRepository.findByUserId(user.getId());
     }
 }
