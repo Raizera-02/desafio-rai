@@ -13,7 +13,7 @@ Este projeto é uma API para gerenciamento de pedidos e estoque de produtos. O s
 
 ## 🚀 Como Executar o Projeto
 
-### 1⃣ ** Configurar o Banco de Dados**
+### 1⃣ **Configurar o Banco de Dados**
 Certifique-se de que o MySQL está rodando e que as configurações de conexão no `application.properties` estão corretas:
 
 ```properties
@@ -23,14 +23,14 @@ spring.datasource.password=senha
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-### 2⃣ ** Rodar a Aplicação**
+### 2⃣ **Rodar a Aplicação**
 No terminal, execute:
 ```sh
 mvn spring-boot:run
 ```
 A API estará rodando em `http://localhost:8080`
 
-### 3⃣ ** Importar a Collection do Insomnia**
+### 3⃣ **Importar a Collection do Insomnia**
 A collection do Insomnia está disponível no repositório para facilitar os testes dos endpoints.
 
 ## 🔒 Autenticação e Uso do Token
