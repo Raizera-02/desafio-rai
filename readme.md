@@ -1,78 +1,130 @@
-# Desafio de Integração com Banco de Dados
+# Desafio API - Sistema de Pedidos
 
 ## 📌 Descrição
-Este projeto é uma API desenvolvida em **Java com Spring Boot** que gerencia pedidos e produtos, garantindo a consistência dos dados e a disponibilidade de estoque. Caso algum produto do pedido não tenha estoque disponível, o pedido será automaticamente cancelado e o usuário será notificado.
+Este projeto é uma API para gerenciamento de pedidos e estoque de produtos. O sistema permite a criação de usuários, autenticação, manipulação de produtos e relatórios gerenciais.
 
-## 🚀 Tecnologias Utilizadas
+## 🛠 Tecnologias Utilizadas
 - **Java 17**
 - **Spring Boot**
-- **Spring Data JPA**
-- **Hibernate**
+- **Spring Security**
+- **JWT para autenticação**
+- **JPA / Hibernate**
 - **MySQL**
-- **H2 Database (para testes)**
-- **Maven**
-- **JUnit & Mockito**
-- **Git**
 
-## 📂 Estrutura do Projeto
-```
-/src
- ├── main/java/com/desafio_api/app
- │   ├── controller/    # Controladores REST
- │   ├── domain/        # Modelos de Entidade
- │   ├── repository/    # Interfaces JPA
- │   ├── service/       # Lógica de Negócio
- │   ├── AppApplication.java  # Classe principal
- ├── test/java/com/desafio_api/app
- │   ├── service/       # Testes unitários
-```
+## 🚀 Como Executar o Projeto
 
-## 🛠 Configuração e Execução
+### 1⃣ ** Configurar o Banco de Dados**
+Certifique-se de que o MySQL está rodando e que as configurações de conexão no `application.properties` estão corretas:
 
-### 1️⃣ **Configuração do Banco de Dados**
-No arquivo `application.properties`, configure a conexão com o MySQL:
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/seu_banco
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
+spring.datasource.url=jdbc:mysql://localhost:3306/seu_banco?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=senha
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.open-in-view=false
-```
-Caso queira usar o banco H2 para testes:
-```properties
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.h2.console.enabled=true
 ```
 
-### 2️⃣ **Rodando a Aplicação**
+### 2⃣ ** Rodar a Aplicação**
+No terminal, execute:
 ```sh
 mvn spring-boot:run
 ```
-A API estará disponível em `http://localhost:8080`.
+A API estará rodando em `http://localhost:8080`
 
-## 📌 Funcionalidades Implementadas
+### 3⃣ ** Importar a Collection do Insomnia**
+A collection do Insomnia está disponível no repositório para facilitar os testes dos endpoints.
 
-### 📦 **Gerenciamento de Pedidos e Estoque**
-- Criar um pedido.
-- Verificar estoque automaticamente.
-- Cancelar o pedido caso não haja estoque disponível.
-- Notificar o usuário sobre o cancelamento.
-- Processar pagamento e atualizar estoque.
+## 🔒 Autenticação e Uso do Token
 
-### 🔍 **Endpoints Disponíveis**
-| Método | Endpoint                | Descrição                      |
-|--------|-------------------------|--------------------------------|
-| `POST` | `/products`             | Criar um novo produto          |
-| `POST` | `/orders`               | Criar um novo produto          |
-| `POST` | `/orders/1/pay`         | Realizar pagamento             |
-| `GET`  | `/orders`               | Listar pedidos do usuário      |
+1. **Cadastrar um usuário** (`ADMIN` ou `USER`):
+   ```sh
+   POST - http://localhost:8080/auth/register
+   ```
+   Enviar um JSON no corpo da requisição:
+   ```json
+   {
+     "username": "admin",
+     "password": "123456",
+     "role": "ADMIN"
+   }
+   ```
 
-## 🧪 Testes
-Para rodar os testes unitários e de integração:
-```sh
-mvn test
-```
+2. **Realizar login para obter o token**:
+   ```sh
+   POST - http://localhost:8080/auth/login
+   ```
+   Corpo da requisição:
+   ```json
+   {
+     "username": "admin",
+     "password": "123456"
+   }
+   ```
+   Resposta:
+   ```json
+   {
+     "token": "eyJhbGciOiJIUzI1..."
+   }
+   ```
+   Copie o token retornado e inclua no **Header Authorization** das requisições seguintes:
+   ```
+   Authorization: Bearer SEU_TOKEN_AQUI
+   ```
 
-## 📩 Contato
-Caso tenha dúvidas, entre em contato via [seu email ou GitHub].
+## 📌 Endpoints Disponíveis
+
+### 🛍️ Produtos
+- Criar um produto (**ADMIN**):
+  ```sh
+  POST - http://localhost:8080/products
+  ```
+- Atualizar um produto (**ADMIN**):
+  ```sh
+  PUT - http://localhost:8080/products/{id}
+  ```
+- Deletar um produto (**ADMIN**):
+  ```sh
+  DELETE - http://localhost:8080/products/{id}
+  ```
+- Listar todos os produtos:
+  ```sh
+  GET - http://localhost:8080/products
+  ```
+- Buscar um produto por ID:
+  ```sh
+  GET - http://localhost:8080/products/{id}
+  ```
+
+### 📊 Relatórios
+- Usuários que mais compraram:
+  ```sh
+  GET - http://localhost:8080/reports/top-users
+  ```
+- Ticket médio das compras:
+  ```sh
+  GET - http://localhost:8080/reports/average-ticket
+  ```
+- Faturamento mensal:
+  ```sh
+  GET - http://localhost:8080/reports/monthly-revenue
+  ```
+
+### 🛠️ Pedidos
+- Criar um novo pedido (**USER**):
+  ```sh
+  POST - http://localhost:8080/orders
+  ```
+- Realizar pagamento de um pedido (**USER**):
+  ```sh
+  POST - http://localhost:8080/orders/{id}/pay
+  ```
+- Listar pedidos do usuário (**USER**):
+  ```sh
+  GET - http://localhost:8080/orders
+  ```
+
+## 📝 Observação
+- O repositório contém a **collection do Insomnia** para facilitar os testes.
+- Para realizar qualquer operação protegida, é necessário autenticar-se e incluir o **token JWT** no cabeçalho.
+
+---
 
