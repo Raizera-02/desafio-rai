@@ -44,10 +44,6 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<Order>> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         // Buscar usuário no banco
-        System.out.println("-------------------------");
-        System.out.println("User ID: " + userDetails.getUserId());
-        System.out.println("Username: " + userDetails.getUsername());
-        System.out.println("-------------------------");
         User user = userDetails.getUser();
         List<Order> orders = orderService.getOrdersByUser(user);
         return ResponseEntity.ok(orders);
